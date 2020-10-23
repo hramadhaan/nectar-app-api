@@ -102,8 +102,17 @@ exports.login = (req, res, next) => {
 };
 
 exports.profile = (req, res, next) => {
+  const errors = validationResult(req);
+  if (!errors.isEmpty()) {
+    const error = new Error("Validation failed");
+    error.statusCode = 422;
+    error.data = errors.array();
+    throw error;
+  }
+
   const id = req.params.id;
-  Auth.findOne({ id: id })
+
+  Auth.findOne({ _id: id })
     .then((result) => {
       if (!result) {
         res.status(404).json({
@@ -117,6 +126,37 @@ exports.profile = (req, res, next) => {
         message: "Berhasil mendapatkan data user",
         data: result,
       });
+    })
+    .catch((err) => {
+      console.log(err);
+    });
+};
+
+exports.getAllUser = (req, res, next) => {
+  let totalItems;
+
+  Auth.find()
+    .countDocuments()
+    .then((numOfUser) => {
+      totalItems = numOfUser;
+
+      return Auth.find();
+    })
+    .then((result) => {
+      if (totalItems < 1) {
+        res.status(404).json({
+          status: 404,
+          message: "Data User belum ada",
+          totalData: totalItems,
+        });
+      } else {
+        res.status(200).json({
+          status: 200,
+          message: "Berhasil mendapatkan data seluruh user",
+          totalData: totalItems,
+          data: result,
+        });
+      }
     })
     .catch((err) => {
       console.log(err);

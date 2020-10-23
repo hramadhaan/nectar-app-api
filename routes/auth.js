@@ -2,7 +2,7 @@ const express = require("express");
 const multer = require("multer");
 const fs = require("fs");
 const moment = require("moment");
-const { body } = require("express-validator");
+const { body, param } = require("express-validator");
 
 const Auth = require("../models/auth");
 
@@ -53,6 +53,8 @@ router.post(
   authController.login
 );
 
-router.get("/profile/:id", authentication, authController.profile);
+router.get("/profile/:id", [authentication], authController.profile);
+
+router.get("/all-user", [authentication], authController.getAllUser);
 
 module.exports = router;

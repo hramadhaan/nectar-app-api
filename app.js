@@ -6,6 +6,7 @@ const path = require("path");
 
 const authRoutes = require("./routes/auth");
 const categoryRoutes = require("./routes/category");
+const productRoutes = require("./routes/product");
 
 const app = express();
 
@@ -26,6 +27,22 @@ app.use((req, res, next) => {
 
 app.use(authRoutes);
 app.use("/category", categoryRoutes);
+app.use("/product", productRoutes);
+
+app.use((req, res, next) => {
+  res.status(404);
+  if (req.accepts("html")) {
+    res.render("404", { url: req.url });
+  }
+
+  if (req.accepts("json")) {
+    res.send({ error: "Not found" });
+    return;
+  }
+
+  // default to plain-text. send()
+  res.type("txt").send("Not found");
+});
 
 app.use((error, req, res, next) => {
   console.log(error);
