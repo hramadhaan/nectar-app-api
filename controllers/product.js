@@ -144,3 +144,41 @@ exports.deleteProduct = (req, res, next) => {
     })
     .catch((err) => console.log(err));
 };
+
+exports.updateProduct = (req, res, next) => {
+  const id = req.params.id;
+
+  const images = req.files;
+  const name = req.body.name;
+  const price = req.body.price;
+  const description = req.body.description;
+  const size = req.body.size;
+  const category = req.body.categoryId;
+
+  var pathImages = images.map((image) => image.path);
+
+  Product.findById(id)
+    .then((prod) => {
+      if (!prod) {
+        const error = new Error("Could not find post");
+        error.statusCode = 400;
+        throw error;
+      }
+      prod.name = name;
+      prod.price = price;
+      prod.description = description;
+      prod.size = size;
+      prod.category = category;
+      prod.images = pathImages;
+
+      return prod.save();
+    })
+    .then((result) => {
+      res.status(201).json({
+        status: 201,
+        message: "Product berhasil di update",
+        data: result,
+      });
+    })
+    .catch((err) => console.log(err));
+};

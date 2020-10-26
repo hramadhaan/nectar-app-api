@@ -39,4 +39,10 @@ router.get(
   productController.deleteProduct
 );
 
+router.post(
+  "/update-product/:id",
+  authentication,
+  productController.updateProduct
+);
+
 module.exports = router;
