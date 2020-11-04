@@ -50,9 +50,7 @@ exports.readAllCategory = (req, res, next) => {
     .then((numOfCategory) => {
       totalItems = numOfCategory;
 
-      return Category.find()
-        .skip((page - 1) * ITEMS_PER_PAGE)
-        .limit(ITEMS_PER_PAGE);
+      return Category.find();
     })
     .then((result) => {
       if (totalItems < 1) {
@@ -66,13 +64,6 @@ exports.readAllCategory = (req, res, next) => {
           status: 200,
           message: "Data category berhasil didapatkan",
           totalData: totalItems,
-          pages: {
-            hasNextPage: ITEMS_PER_PAGE * page < totalItems,
-            hasPreviousPage: page > 1,
-            nextPage: page + 1,
-            previousPage: page - 1,
-            lastPage: Math.ceil(totalItems / ITEMS_PER_PAGE),
-          },
           data: result,
         });
       }
